@@ -25,11 +25,24 @@ function App() {
     from: { transform: "translate3d(0,100%,0) rotate3d(0,0,1,-35deg)" }
   });
 
+  const img = useSpring({
+    to: {
+      opacity: toggle ? 0 : 1,
+      transform: toggle
+        ? "translateY(-40px) scaleY(1.1)"
+        : "translateY(0) scale(1)"
+    },
+    from: {
+      opacity: 1,
+      transform: "translateY(-40px) scaleY(1.1)"
+    }
+  });
+
   const trail = useTrail(letters.length, {
     config,
-    opacity: 1,
-    x: 0,
-    from: { opacity: 0, x: 20, height: 0 }
+    opacity: toggle ? 0 : 1,
+    x: toggle ? 40 : 0,
+    from: { opacity: 0, x: 20}
   });
 
   const boundingBox = (w, h, angle) => [
@@ -66,11 +79,14 @@ function App() {
           style={{ ...props, width: boundingW, height: boundingH }}
           className="content__move"
         >
-          <animated.div style={{ ...reverseProps }} className="content__reverse">
+          <animated.div
+            style={{ ...reverseProps }}
+            className="content__reverse"
+          >
             <div className="intro">
-              <div
+              <animated.div
                 className="intro__img"
-                style={{ backgroundImage: `url(${introImg})` }}
+                style={{ ...img, backgroundImage: `url(${introImg})` }}
               />
               <h1 className="intro__title">
                 {trail.map(({ x, ...rest }, index) => (
@@ -78,7 +94,7 @@ function App() {
                     key={index}
                     style={{
                       ...rest,
-                      transform: x.interpolate(x => `translate3d(0, ${x}px, 0)`)
+                      transform: x.interpolate(x => `translate3d(0, -${x}px, 0)`)
                     }}
                   >
                     {letters[index]}
